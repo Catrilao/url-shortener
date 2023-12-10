@@ -35,13 +35,14 @@ def sqlite_connection():
 
 
 r = redis_connection()
+
 conn = sqlite_connection()
-
-
 if conn is not None:
     conn.execute(
         "CREATE TABLE IF NOT EXISTS urls (short_url TEXT PRIMARY KEY, original_url TEXT)"
     )
+    conn.commit()
+    conn.close()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -70,17 +71,19 @@ def home():
 
 @app.route("/<short_url>")
 def redirect_to_url(short_url):
-    try:
-        original_url = get_url(short_url)
-        return redirect(original_url)
-    except ValueError:
+    original_url = get_url(short_url)
+
+    if original_url is None:
         abort(404)
+
+    return redirect(original_url)
 
 
 def store_url(short_url, original_url):
     if r is not None:
         r.set(short_url, original_url)
 
+    conn = sqlite_connection()
     if conn is not None:
         cursor = conn.cursor()
         cursor.execute(
@@ -88,6 +91,7 @@ def store_url(short_url, original_url):
             (short_url, original_url),
         )
         conn.commit()
+        conn.close()
 
 
 def get_url(short_url):
@@ -96,20 +100,16 @@ def get_url(short_url):
     else:
         original_url = None
 
+    conn = sqlite_connection()
     if not original_url and conn is not None:
-        try:
-            cursor = conn.cursor()
-            row = cursor.execute(
-                "SELECT original_url FROM urls WHERE short_url = ?", (short_url,)
-            ).fetchone()
-        except sqlite3.OperationalError:
-            row = None
-    else:
-        row = None
+        cursor = conn.cursor()
+        row = cursor.execute(
+            "SELECT original_url FROM urls WHERE short_url = ?", (short_url,)
+        ).fetchone()
+        conn.close()
 
-    if row is None:
-        raise ValueError("URL not found")
-    original_url = row[0]
+        if row is not None:
+            original_url = row[0]
 
     if original_url:
         return original_url.decode("utf-8")
