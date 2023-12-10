@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+</head>
+
+<body>
+  <h1>URL Shortener</h1>
+  <form action="/" method="POST">
+    <label for="url">Ingrese URL:</label>
+    <input type="url" name="url" id="url" required>
+    <button type="submit">Acortar</button>
+  </form>
+
+  {% if original_url %}
+  <p>URL original: {{ original_url }}</p>
+  <p>URL acortada: {{ short_url }}</p>
+  {% endif %}
+
+</body>
+
+</html>
