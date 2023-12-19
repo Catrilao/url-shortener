@@ -4,14 +4,15 @@ from dotenv import load_dotenv
 from validators import url
 import os
 import redis
-import sqlite3
-import atexit
+import libsql_client
 
 app = Flask(__name__)
 
 
+load_dotenv()
+
+
 def redis_connection():
-    load_dotenv()
     try:
         r = redis.Redis(
             host=os.getenv("REDIS_HOST"),
@@ -25,24 +26,19 @@ def redis_connection():
         return None
 
 
-def sqlite_connection():
+def sql_connection():
     try:
-        conn = sqlite3.connect("urls.db")
-        return conn
-    except sqlite3.OperationalError:
-        print("Error al conectar a la base de datos SQLite")
+        return libsql_client.create_client_sync(
+            url=os.getenv("TURSO_URL"),
+            auth_token=os.getenv("TURSO_AUTH_TOKEN"),
+        )
+    except Exception:
+        print("Error al conectar a la base de datos SQL")
         return None
 
 
 r = redis_connection()
-
-conn = sqlite_connection()
-if conn is not None:
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS urls (short_url TEXT PRIMARY KEY, original_url TEXT)"
-    )
-    conn.commit()
-    conn.close()
+client = sql_connection()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -83,48 +79,27 @@ def store_url(short_url, original_url):
     if r is not None:
         r.set(short_url, original_url)
 
-    conn = sqlite_connection()
-    if conn is not None:
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO urls (short_url, original_url) VALUES (?, ?)",
-            (short_url, original_url),
-        )
-        conn.commit()
-        conn.close()
+    client.execute(
+        "INSERT INTO urls (short_url, original_url) VALUES (?, ?)",
+        (short_url, original_url),
+    )
 
 
 def get_url(short_url):
     if r is not None:
         original_url = r.get(short_url)
-    else:
-        original_url = None
 
-    conn = sqlite_connection()
-    if not original_url and conn is not None:
-        cursor = conn.cursor()
-        row = cursor.execute(
-            "SELECT original_url FROM urls WHERE short_url = ?", (short_url,)
-        ).fetchone()
-        conn.close()
+        if original_url is not None:
+            return original_url.decode("utf-8")
 
-        if row is not None:
-            original_url = row[0]
+    result_set = client.execute(
+        "SELECT original_url FROM urls WHERE short_url = ?", (short_url,)
+    )
 
-    if original_url:
-        return original_url.decode("utf-8")
-    else:
-        return None
+    if len(result_set) > 0:
+        return result_set.rows[0][0]
 
-
-def close_connections():
-    if r is not None:
-        r.close()
-    if conn is not None:
-        conn.close()
-
-
-atexit.register(close_connections)
+    return None
 
 
 if __name__ == "__main__":

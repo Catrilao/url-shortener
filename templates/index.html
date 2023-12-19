@@ -4,11 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css">
   <title>URL Shortener</title>
 </head>
 
 <body>
-  <h1>URL Shortener</h1>
+  <h1>Acortador de URLs</h1>
   <form action="/" method="POST">
     <label for="url">Ingrese URL:</label>
     <input type="url" name="url" id="url" required>
@@ -16,10 +17,9 @@
   </form>
 
   {% if original_url %}
-  <p>URL original: {{ original_url }}</p>
-  <p>URL acortada: {{ short_url }}</p>
+  <p>URL original: <a href="{{ original_url }}"> {{ original_url }} </a></p>
+  <p>URL acortada: <a href="{{ short_url }}">{{ short_url }} </a></p>
   {% endif %}
-
 </body>
 
 </html>
