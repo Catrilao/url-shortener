@@ -1,3 +1,4 @@
 .env
 venv
-urls.db
+.pytest_cache/
+__pycache__/
