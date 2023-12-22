@@ -52,7 +52,7 @@ TURSO_DB_AUTH_TOKEN=
 4. Ejecutar la aplicación
 
 ```sh
-python main.py
+python app/main.py
 ```
 
 ## Configuración de Redis
