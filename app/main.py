@@ -7,17 +7,6 @@ import logging
 import os
 import redis
 
-ERROR_MESSAGE_REDIS_AND_SQL_CONNECTION = "Error al conectar a Redis y Turso"
-ERROR_MESSAGE_REDIS_CONNECTION = "Error al conectar al servidor Redis"
-ERROR_MESSAGE_SQL_CONNECTION = "Error al conectar a la base de datos SQL"
-
-ERROR_MESSAGE_REDIS_GET = "Error al obtener url en Redis"
-ERROR_MESSAGE_SQL_GET = "Error al obtener url en Turso"
-ERROR_MESSAGE_REDIS_AND_SQL_GET = "Error al obtener la url"
-
-ERROR_MESSAGE_REDIS_STORE = "Error al guardar la url en Redis"
-ERROR_MESSAGE_SQL_STORE = "Error al guardar la url en Turso"
-ERROR_MESSAGE_REDIS_AND_SQL_STORE = "Error al guardar la url en Redis y Turso"
 
 app = Flask(__name__)
 
@@ -45,8 +34,8 @@ def sql_connection():
     if "client" not in g:
         try:
             g.client = libsql_client.create_client_sync(
-                url=os.getenv("TURSO_URL"),
-                auth_token=os.getenv("TURSO_AUTH_TOKEN"),
+                url=os.getenv("TURSO_DB_URL"),
+                auth_token=os.getenv("TURSO_DB_AUTH_TOKEN"),
             )
         except libsql_client.LibsqlError:
             logging.error(ERROR_MESSAGE_SQL_CONNECTION)
@@ -193,6 +182,18 @@ class UrlNotStoredError(Exception):
 class UrlNotRetrievedError(Exception):
     pass
 
+
+ERROR_MESSAGE_REDIS_AND_SQL_CONNECTION = "Error al conectar a Redis y Turso"
+ERROR_MESSAGE_REDIS_CONNECTION = "Error al conectar al servidor Redis"
+ERROR_MESSAGE_SQL_CONNECTION = "Error al conectar a la base de datos SQL"
+
+ERROR_MESSAGE_REDIS_GET = "Error al obtener url en Redis"
+ERROR_MESSAGE_SQL_GET = "Error al obtener url en Turso"
+ERROR_MESSAGE_REDIS_AND_SQL_GET = "Error al obtener la url"
+
+ERROR_MESSAGE_REDIS_STORE = "Error al guardar la url en Redis"
+ERROR_MESSAGE_SQL_STORE = "Error al guardar la url en Turso"
+ERROR_MESSAGE_REDIS_AND_SQL_STORE = "Error al guardar la url en Redis y Turso"
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)
