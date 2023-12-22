@@ -5,14 +5,14 @@ from unittest.mock import patch, Mock, call
 import logging
 import pytest
 
-from app.main import ERROR_MESSAGE_REDIS_CONNECTION, ERROR_MESSAGE_SQL_CONNECTION
-import app.main as main
+from main import ERROR_MESSAGE_REDIS_CONNECTION, ERROR_MESSAGE_SQL_CONNECTION
+import main
 
 REDIS_HOST = "localhost"
 REDIS_PORT = "6467"
 REDIS_PASSWORD = "password"
-TURSO_URL = "www.turso.com"
-TURSO_AUTH_TOKEN = "1234567890"
+TURSO_DB_URL = "www.turso.com"
+TURSO_DB_AUTH_TOKEN = "1234567890"
 
 
 @pytest.fixture(autouse=True)
@@ -95,7 +95,7 @@ def test_redis_connection_logs_error_on_failure(mock_redis, mock_logging_error):
 
 
 def test_sql_connection_success(mock_client, mock_getenv):
-    mock_getenv.side_effect = [TURSO_URL, TURSO_AUTH_TOKEN]
+    mock_getenv.side_effect = [TURSO_DB_URL, TURSO_DB_AUTH_TOKEN]
     mock_client.return_value = Mock()
 
     result1 = main.sql_connection()
@@ -106,19 +106,20 @@ def test_sql_connection_success(mock_client, mock_getenv):
     assert "client" in g
     assert isinstance(g.client, Mock)
 
-    mock_client.assert_called_once_with(url=TURSO_URL, auth_token=TURSO_AUTH_TOKEN)
+    mock_client.assert_called_once_with(
+        url=TURSO_DB_URL, auth_token=TURSO_DB_AUTH_TOKEN
+    )
 
     result2 = main.sql_connection()
 
     assert result2 == result1
-
     mock_client.assert_called_once()
 
     assert mock_getenv.call_count == 2
     mock_getenv.assert_has_calls(
         [
-            call("TURSO_URL"),
-            call("TURSO_AUTH_TOKEN"),
+            call("TURSO_DB_URL"),
+            call("TURSO_DB_AUTH_TOKEN"),
         ]
     )
 

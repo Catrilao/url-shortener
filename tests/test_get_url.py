@@ -3,13 +3,13 @@ from unittest.mock import patch, Mock, MagicMock, call
 import logging
 import pytest
 
-from app.main import (
+from main import (
     ERROR_MESSAGE_REDIS_AND_SQL_CONNECTION,
     ERROR_MESSAGE_REDIS_GET,
     ERROR_MESSAGE_SQL_GET,
     ERROR_MESSAGE_REDIS_AND_SQL_GET,
 )
-import app.main as main
+import main
 
 SHORT_URL = "123456"
 ORIGINAL_URL = "www.google.com"
@@ -28,14 +28,14 @@ def app_context():
 @pytest.fixture
 def mock_redis_connection():
     mock_instance = Mock()
-    with patch("app.main.redis_connection", return_value=mock_instance) as mock:
+    with patch("main.redis_connection", return_value=mock_instance) as mock:
         yield mock
 
 
 @pytest.fixture
 def mock_sql_connection():
     mock_instance = Mock()
-    with patch("app.main.sql_connection", return_value=mock_instance) as mock:
+    with patch("main.sql_connection", return_value=mock_instance) as mock:
         yield mock
 
 

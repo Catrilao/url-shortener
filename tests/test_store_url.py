@@ -3,13 +3,13 @@ from unittest.mock import patch, Mock, call
 import logging
 import pytest
 
-from app.main import (
+from main import (
     ERROR_MESSAGE_REDIS_AND_SQL_CONNECTION,
     ERROR_MESSAGE_REDIS_STORE,
     ERROR_MESSAGE_SQL_STORE,
     ERROR_MESSAGE_REDIS_AND_SQL_STORE,
 )
-import app.main as main
+import main
 
 
 SHORT_URL = "123456"
@@ -28,14 +28,14 @@ def app_context():
 
 @pytest.fixture
 def mock_redis_connection():
-    with patch("app.main.redis_connection") as mock:
+    with patch("main.redis_connection") as mock:
         mock.return_value = Mock()
         yield mock
 
 
 @pytest.fixture
 def mock_sql_connection():
-    with patch("app.main.sql_connection") as mock:
+    with patch("main.sql_connection") as mock:
         mock.return_value = Mock()
         yield mock
 

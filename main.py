@@ -54,7 +54,7 @@ def home():
 
         uuid = str(uuid4().hex[:6])
 
-        while get_url(uuid) is not None:
+        while get_url(uuid, redis_connection(), sql_connection()) is not None:
             uuid = str(uuid4().hex[:6])
 
         store_url(uuid, original_url, redis_connection(), sql_connection())
@@ -66,18 +66,22 @@ def home():
             original_url=original_url,
             short_url=short_url,
         )
-
     return render_template("index.html")
 
 
 @app.route("/<short_url>")
 def redirect_to_url(short_url):
-    original_url = get_url(short_url)
+    original_url = get_url(short_url, redis_connection(), sql_connection())
 
     if original_url is None:
         return render_template("index.html")
 
     return redirect(original_url)
+
+
+@app.route("/test")
+def test():
+    return "Test"
 
 
 @app.errorhandler(Exception)
@@ -196,4 +200,4 @@ ERROR_MESSAGE_SQL_STORE = "Error al guardar la url en Turso"
 ERROR_MESSAGE_REDIS_AND_SQL_STORE = "Error al guardar la url en Redis y Turso"
 
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True)
