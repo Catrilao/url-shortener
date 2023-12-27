@@ -201,8 +201,9 @@ ERROR_MESSAGE_REDIS_AND_SQL_STORE = "Error al guardar la url en Redis y Turso"
 if __name__ == "__main__":
     print("App funcionando")
     url = urlparse(os.getenv("SERVER_BASE_URL"))
+    port = url.port if url.port else 5000
     serve(
         app,
         host=url.hostname,
-        port=url.port,
+        port=port,
     )
