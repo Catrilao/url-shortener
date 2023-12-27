@@ -34,19 +34,27 @@ git clone https://github.com/Catrilao/url-shortener.git
 pip install -r requirements.txt
 ```
 
-3. Crear archivo .env en la raíz del proyecto y llenar con las variables de entorno
+3. Crear un archivo `.env` en la raíz del proyecto y completarlo con las variables de entorno necesarias. 
 
-[Como obtener las variables de entorno de Redis](#configuración-de-redis)
+Puedes encontrar información sobre cómo obtener las variables de entorno para Redis y Turso en las siguientes secciones:
 
-[Como obtener las variables de entorno de Turso](#configuración-de-turso)
+- [Configuración de Redis](#configuración-de-redis)
+- [Configuración de Turso](#configuración-de-turso)
+
+Aquí tienes un ejemplo de cómo podría verse tu archivo `.env`:
 
 ```txt
-REDIS_HOST=
-REDIS_PORT=
-REDIS_PASSWORD=
+# Puedes usar esta URL o reemplazarla por otra
+SERVER_BASE_URL=http://127.0.0.1:5000
 
-TURSO_DB_URL=
-TURSO_DB_AUTH_TOKEN=
+# Configuración de Redis
+REDIS_HOST=                  # Aquí va el host de Redis
+REDIS_PORT=                  # Aquí va el puerto de Redis
+REDIS_PASSWORD=              # Aquí va la contraseña de Redis
+
+# Configuración de Turso
+TURSO_DB_URL=                # Aquí va la URL de la base de datos de Turso
+TURSO_DB_AUTH_TOKEN=         # Aquí va el token de autenticación de la base de datos de Turso
 ```
 
 4. Ejecutar la aplicación
@@ -54,6 +62,8 @@ TURSO_DB_AUTH_TOKEN=
 ```sh
 python main.py
 ```
+
+La aplicación se ejecutará en la URL proporcionada en el archivo `.env`.
 
 ## Configuración de Redis
 
@@ -65,9 +75,9 @@ python main.py
 6. Crea un archivo `.env` en la raíz de tu proyecto y pega los valores de host, port y password
 
 ```txt
-REDIS_HOST=
-REDIS_PORT=
-REDIS_PASSWORD=
+REDIS_HOST=                  # Aquí va el host de Redis
+REDIS_PORT=                  # Aquí va el puerto de Redis
+REDIS_PASSWORD=              # Aquí va la contraseña de Redis
 ```
 
 ## Configuración de Turso
@@ -113,8 +123,8 @@ turso db tokens create [NOMBRE-BD] --expiration none
 4. Crea un archivo `.env` en la raíz del proyecto copia la url de la base de datos y el token de autenticación:
 
 ```txt
-TURSO_DB_URL=
-TURSO_DB_AUTH_TOKEN=
+TURSO_DB_URL=                # Introduce la URL de la base de datos de Turso
+TURSO_DB_AUTH_TOKEN=         # Introduce el token de autenticación de la base de datos de Turso
 ```
 
 
