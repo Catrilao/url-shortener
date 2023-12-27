@@ -60,7 +60,8 @@ def home():
 
         store_url(uuid, original_url, redis_connection(), sql_connection())
 
-        short_url = f"{os.getenv("SERVER_BASE_URL")}/{uuid}"
+        server_base_url = os.getenv("SERVER_BASE_URL")
+        short_url = f"{server_base_url}/{uuid}"
 
         return render_template(
             "index.html",
