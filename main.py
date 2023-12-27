@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, g
 from urllib.parse import urlparse
 from uuid import uuid4
+from waitress import serve
 import libsql_client
 import logging
 import os
@@ -59,13 +60,14 @@ def home():
 
         store_url(uuid, original_url, redis_connection(), sql_connection())
 
-        short_url = f"http://127.0.0.1:5000/{uuid}"
+        short_url = f"{os.getenv("SERVER_BASE_URL")}/{uuid}"
 
         return render_template(
             "index.html",
             original_url=original_url,
             short_url=short_url,
         )
+
     return render_template("index.html")
 
 
@@ -73,15 +75,10 @@ def home():
 def redirect_to_url(short_url):
     original_url = get_url(short_url, redis_connection(), sql_connection())
 
-    if original_url is None:
-        return render_template("index.html")
+    if original_url is not None:
+        return redirect(original_url)
 
-    return redirect(original_url)
-
-
-@app.route("/test")
-def test():
-    return "Test"
+    return render_template("index.html")
 
 
 @app.errorhandler(Exception)
@@ -199,5 +196,12 @@ ERROR_MESSAGE_REDIS_STORE = "Error al guardar la url en Redis"
 ERROR_MESSAGE_SQL_STORE = "Error al guardar la url en Turso"
 ERROR_MESSAGE_REDIS_AND_SQL_STORE = "Error al guardar la url en Redis y Turso"
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("App funcionando")
+    url = urlparse(os.getenv("SERVER_BASE_URL"))
+    serve(
+        app,
+        host=url.hostname,
+        port=url.port,
+    )
