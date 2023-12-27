@@ -34,7 +34,7 @@ git clone https://github.com/Catrilao/url-shortener.git
 pip install -r requirements.txt
 ```
 
-3. Crear archivo .env en la raíz del proyecto y llenano con las variables de entorno
+3. Crear archivo .env en la raíz del proyecto y llenar con las variables de entorno
 
 [Como obtener las variables de entorno de Redis](#configuración-de-redis)
 
