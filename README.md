@@ -45,7 +45,7 @@ Aquí tienes un ejemplo de cómo podría verse tu archivo `.env`:
 
 ```txt
 # Puedes usar esta URL o reemplazarla por otra
-SERVER_BASE_URL=http://127.0.0.1:5000
+SERVER_BASE_URL=http://127.0.0.1:4503
 
 # Configuración de Redis
 REDIS_HOST=                  # Aquí va el host de Redis
@@ -56,6 +56,7 @@ REDIS_PASSWORD=              # Aquí va la contraseña de Redis
 TURSO_DB_URL=                # Aquí va la URL de la base de datos de Turso
 TURSO_DB_AUTH_TOKEN=         # Aquí va el token de autenticación de la base de datos de Turso
 ```
+
 
 4. Ejecutar la aplicación
 
